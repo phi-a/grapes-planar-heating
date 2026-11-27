@@ -7,6 +7,7 @@
   huygens_entry.png       - Huygens at Titan, same three panels
   three_worlds.png        - convective vs radiative peak heating, all three
   size_effect.png         - radiative share of peak heating vs nose radius
+  validation.png          - model minus flight, with Monte Carlo spread
 """
 from dataclasses import replace
 from pathlib import Path
@@ -22,6 +23,7 @@ from grapes import TITAN, simulate
 from grapes.cases import (HUYGENS_ENTRY, HUYGENS_FLIGHT, PATHFINDER_ENTRY, PATHFINDER_FLIGHT,
                           PATHFINDER_INERTIAL, STARDUST_ENTRY, STARDUST_FLIGHT,
                           STARDUST_INERTIAL, pathfinder_convert, stardust_convert)
+from grapes.dispersion import disperse
 from grapes.heating import HUYGENS_DESIGN_POINTS, TITAN_HUYGENS_BOLTZMANN
 from grapes.sweep import entry_corridor, skip_out_boundary
 
@@ -273,6 +275,37 @@ def size_figure(cases, titan, filename):
     plt.close(fig)
 
 
+def validation_figure(cases, filename, n=400):
+    """Model minus flight for each mission, with the 95% Monte Carlo interval.
+
+    cases: (label, entry, check time s, flight peak decel m/s^2, flight altitude m).
+    """
+    fig, ax = plt.subplots(1, 2, figsize=(10.5, 3.3), constrained_layout=True, sharey=True)
+    fig.suptitle("Model minus flight. Dot: nominal run. Bar: 95% of 400 runs with perturbed inputs.",
+                 x=0.01, ha="left", fontsize=11, fontweight="bold")
+    rows = range(len(cases))[::-1]
+    for y, (label, entry, t_check, decel, altitude) in zip(rows, cases):
+        peak, alt = disperse(entry, t_check, n=n)
+        for a, err, unit in ((ax[0], 100 * (peak / decel - 1), "%"),
+                             (ax[1], (alt - altitude) / 1e3, " km")):
+            lo, hi = np.percentile(err, [2.5, 97.5])
+            a.plot([lo, hi], [y, y], color=BLUE, lw=5, solid_capstyle="round", alpha=0.45)
+            a.plot(err[0], y, "o", color=BLUE, ms=9, mec=SURFACE, mew=2)
+            a.annotate(f"{err[0]:+.1f}{unit}".replace("-", "−"), (err[0], y), xytext=(0, 11),
+                       textcoords="offset points", ha="center", color=INK)
+            print(f"{label.splitlines()[0]}: {err[0]:+.1f}{unit} [{lo:+.1f}, {hi:+.1f}]")
+    for a, title, lim in ((ax[0], "Peak deceleration (%)", (-8, 8)),
+                          (ax[1], "Altitude late in entry (km)", (-8, 8))):
+        a.axvline(0, color=INK, lw=1.2)
+        a.text(0.25, len(cases) - 0.42, "flight", ha="left", va="bottom", color=INK2)
+        a.set(title=title, xlim=lim, ylim=(-0.6, len(cases) - 0.25))
+        a.grid(axis="y", visible=False)
+        a.tick_params(axis="y", length=0)
+    ax[0].set_yticks(list(rows), [c[0] for c in cases])
+    fig.savefig(OUT / filename, dpi=180)
+    plt.close(fig)
+
+
 def report(name, tr):
     print(f"{name}: peak {tr.peak_q_conv / 1e4:.0f} convective + {tr.peak_q_rad / 1e4:.0f} "
           f"radiative, {tr.peak_q_total / 1e4:.0f} total W/cm2; peak {tr.peak_decel_g:.1f} g")
@@ -323,6 +356,14 @@ if __name__ == "__main__":
          100 * hy.peak_q_rad / (hy.peak_q_rad + hy.peak_q_conv),
          100 * hy_upper.peak_q_rad / (hy_upper.peak_q_rad + hy.peak_q_conv)),
         "size_effect.png")
+    validation_figure(
+        [("Stardust\nEarth", STARDUST_ENTRY, SF["drogue_time"], SF["peak_g"] * 9.80665,
+          SF["drogue_altitude"]),
+         ("Pathfinder\nMars", PATHFINDER_ENTRY, PF["chute_time"], PF["peak_g"] * 9.80665,
+          PF["chute_altitude"]),
+         ("Huygens\nTitan", HUYGENS_ENTRY, HF["late_time"], HF["peak_decel"],
+          HF["late_altitude"])],
+        "validation.png")
 
     corridor_figure(
         STARDUST_ENTRY, STARDUST_INERTIAL, stardust_convert, "stardust_corridor.png",

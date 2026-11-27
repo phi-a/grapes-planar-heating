@@ -41,6 +41,17 @@ two peaks occur a few seconds apart.
 
 Each mission starts from its published entry state. No parameter is tuned.
 
+![Model minus flight with Monte Carlo spread](docs/figures/validation.png)
+
+- **Accuracy:** peak deceleration is 1–3% below flight on all three missions,
+  a consistent low bias.
+- **Precision:** bars show the central 95% of 400 runs with entry angle
+  (σ = 0.05°), entry speed (0.1%), drag coefficient (2%) and density (5%)
+  perturbed. These σ values are assumptions.
+- Flight lies inside the bar for Pathfinder, at its edge for Stardust and
+  outside it for Huygens. Input uncertainty alone does not explain the
+  Huygens bias.
+
 | Mission | Quantity | grapes | Flight |
 |---|---|---|---|
 | Stardust | Peak deceleration | 31.8 g | 32.9 g |
@@ -85,6 +96,7 @@ entry to better than one part in a million.
 - **Radiative heating:** Tauber–Sutton at Earth and Mars. At Titan, a fit to
   three published points for Huygens, bracketed by two CN models.
 - **Drag:** constant hypersonic coefficient per capsule.
+- **Uncertainty:** Monte Carlo over four inputs (`grapes/dispersion.py`).
 
 ## Limits
 
@@ -104,8 +116,8 @@ Not included: 3-D flight, attitude dynamics, Mach-dependent drag.
 
 ```
 pip install -e ".[dev]"
-pytest                        # 65 tests
-python examples/showcase.py   # regenerates every figure, about 4 minutes
+pytest                        # 68 tests
+python examples/showcase.py   # regenerates every figure, about 6 minutes
 ```
 
 ```python
