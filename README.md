@@ -2,6 +2,8 @@
 
 # grapes
 
+**G**eneral **R**adiation **A**nd **P**lanetary **E**ntry **S**imulator
+
 Entry heating at Earth, Mars and Titan, from a small 2-D simulator checked
 against three flown missions.
 
