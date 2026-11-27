@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.png" alt="grapes: a bunch of low hanging fruits" width="240"></p>
+
 # grapes
 
 Entry heating at Earth, Mars and Titan, from a small 2-D simulator checked
