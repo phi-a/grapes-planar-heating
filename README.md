@@ -4,82 +4,75 @@
 
 **G**eneral **R**adiation **A**nd **P**lanetary **E**ntry **S**imulator
 
-Entry heating at Earth, Mars and Titan, from a small 2-D simulator checked
-against three flown missions.
+A capsule entering an atmosphere is heated at its nose in two ways: hot gas
+conducts heat into the wall (convective heating), and hot gas glows
+(radiative heating). This project asks a design question: **when does
+radiation, rather than convection, set the heatshield?** It answers with a
+small 2-D entry simulator, checked against three flown missions.
 
-## Question
+## Two heating laws
 
-When does radiation, rather than convection, set the peak heating at the nose
-of an entry capsule?
+![Heating models with color-coded inputs](docs/figures/equations.png)
 
-## Answer
+Convection falls with nose radius; radiation rises with it, and climbs much
+faster with speed. Their ratio is the whole story: larger, faster and denser
+entries tilt toward radiation.
 
-**1. At equal size, Titan radiates like Earth at half the speed**
-
-![Convective vs radiative peak heating at three worlds](docs/figures/three_worlds.png)
-
-| As flown | Entry speed | Nose radius | Radiative share |
-|---|---|---|---|
-| Stardust, Earth | 12.9 km/s | 0.23 m | 15% |
-| Pathfinder, Mars | 7.3 km/s | 0.66 m | 4% |
-| Huygens, Titan | 6.0 km/s | 1.25 m | 47–61% |
-
-The capsules differ in size, which matters (finding 2). At Huygens' 1.25 m
-nose radius:
-
-| Same size | Entry speed | Radiative share |
-|---|---|---|
-| Earth, Stardust's trajectory | 12.9 km/s | 47% |
-| Mars, Pathfinder's trajectory | 7.3 km/s | 8% |
-| Titan, Huygens | 6.0 km/s | 47–61% |
-
-Titan matches or exceeds Earth's radiative share at less than half the speed. Its
-nitrogen–methane atmosphere forms CN behind the shock, and CN radiates
-strongly. Mars, at a similar speed, radiates little.
-
-**2. Larger noses shift the heating toward radiation**
-
-![Radiative share vs nose radius](docs/figures/size_effect.png)
-
-Convective heating falls as 1/√(nose radius); radiative heating rises with it.
-On the same trajectory, radiation becomes the larger peak at a nose radius of
-about 1.4 m at Earth (Stardust's entry) and 13 m at Mars (Pathfinder's).
-
-**3. At Earth, faster entries radiate more**
-
-For the Stardust capsule at −8.2°, the radiative share is 15% at 12.9 km/s,
-24% at 14 km/s and 37% at 16 km/s.
-
-*Radiative share* = radiative peak ÷ (radiative peak + convective peak). The
-two peaks occur a few seconds apart.
-
-## Validation
+## Is the model right?
 
 Each mission starts from its published entry state. No parameter is tuned.
 
 ![Model minus flight with Monte Carlo spread](docs/figures/validation.png)
 
-- **Accuracy:** peak deceleration is 1.2–3.3% below flight on all three
-  missions, a consistent low bias.
-- **Precision:** bars show the central 95% of 400 runs with entry angle
-  (σ = 0.05°), entry speed (0.1%), drag coefficient (2%) and density (5%)
-  perturbed. These σ values are assumptions.
-- Flight lies inside the bar for Pathfinder, at its edge for Stardust and
-  outside it for Huygens. Input uncertainty alone does not explain the
-  Huygens bias. Two flight values are approximate: Pathfinder's are rounded
-  in the source, and Huygens' peak is read from a published plot.
+Peak deceleration lands 1.2–3.3% below flight on all three missions, a small
+consistent bias. Late-entry altitude is within the input-uncertainty spread
+for all three. Heating was never measured in flight. Against published
+estimates the model is within 20% for Pathfinder and Huygens, and 30% below
+Stardust's pre-flight design value (Details).
 
-| Mission | Quantity | grapes | Flight |
-|---|---|---|---|
-| Stardust | Peak deceleration | 31.8 g | 32.9 g |
-| | Altitude at 137.9 s | 31.8 km | 31.0 km |
-| Pathfinder | Peak deceleration | 15.8 g | 16 g |
-| | Altitude at 171 s | 8.8 km | ≈ 9 km |
-| Huygens | Peak deceleration | 12.0 g | 12.3 g |
-| | Altitude at 267.7 s | 159.7 km | 157.3 km |
+## As flown
 
-Heating was not measured on any of these flights. Against published
-estimates:
+![Convective vs radiative peak heating at three worlds](docs/figures/three_worlds.png)
+
+Huygens, the slowest entry, has the largest radiative share. Part of that is
+size: its nose is more than five times Stardust's. At the same 1.25 m nose, Earth on
+Stardust's trajectory reaches 47% and Mars 8%. **Titan matches Earth at half
+the speed**: its nitrogen–methane air forms CN behind the shock, a strong
+radiator.
+
+## Where radiation takes over
+
+![Design map over entry speed and nose radius](docs/figures/design_map.png)
+
+| | Radiation = convection at |
+|---|---|
+| Earth, 12 → 16 km/s | 2.4 m → 0.44 m nose radius |
+| Mars, 7 → 9 km/s | 18 m → 5.5 m |
+| Titan, 6 km/s | Huygens' own 1.25 m |
+
+## Engineering takeaway
+
+![Peak heating against nose radius](docs/figures/nose_trade.png)
+
+**Blunt the nose until radiation takes over, then stop.** A blunter nose
+cuts convective heating but adds radiative heating, so total peak heating
+has a minimum close to the crossover.
+
+- **Earth sample return:** on Stardust's entry the best nose is 1.7 m, with
+  32% less peak heating than the flown 0.23 m. At 16 km/s the crossover drops
+  below half a metre, so fast returns must be sized for radiation.
+- **Mars:** the crossover sits at 5–18 m, beyond any flown aeroshell.
+  Convection sizes Mars heatshields; radiation is a margin.
+- **Titan:** Huygens already sits at the crossover. The disagreement between
+  CN radiation models (47–61%) is itself a design driver.
+
+These trades hold the trajectory, mass and drag area fixed and change only
+the nose radius.
+
+## Details
+
+<details>
+<summary>Heating against published estimates</summary>
 
 | Mission | grapes, peak | Published |
 |---|---|---|
@@ -88,9 +81,7 @@ estimates:
 | Huygens, convective | 31 W/cm² | 34–39 W/cm² (design study) |
 | Huygens, radiative | 28–49 W/cm² | 21–67 W/cm² (design study) |
 
-Under the Allen–Eggers assumptions (no gravity, flat planet), the equations
-of motion reproduce their closed-form ballistic entry to better than one part
-in a million.
+</details>
 
 <details>
 <summary>Entry profiles and corridor maps</summary>
@@ -103,7 +94,8 @@ in a million.
 
 </details>
 
-## Method
+<details>
+<summary>Method</summary>
 
 - **Flight:** point mass in the entry plane, with drag, gravity, and the
   Coriolis and centrifugal terms of the rotating planet.
@@ -115,8 +107,14 @@ in a million.
   three published points for Huygens, bracketed by two CN models.
 - **Drag:** constant hypersonic coefficient per capsule.
 - **Uncertainty:** Monte Carlo over four inputs (`grapes/dispersion.py`).
+- **Verification:** under the Allen–Eggers assumptions (no gravity, flat
+  planet) the equations of motion reproduce their closed-form ballistic entry
+  to better than one part in a million.
 
-## Limits
+</details>
+
+<details>
+<summary>Limits</summary>
 
 - The radiative fits are stated to be within about 20% of detailed
   computations. Stardust's and Pathfinder's nose radii sit just below the
@@ -124,13 +122,16 @@ in a million.
 - Titan radiative heating covers Huygens' size and 4.7–5.5 km/s only.
 - Mars and Titan densities were derived from each probe's own deceleration,
   so their deceleration match is a consistency check, not an independent test.
+- Two flight values are approximate: Pathfinder's are rounded in the source,
+  and Huygens' peak deceleration is read from a published plot.
 - Stardust uses the standard atmosphere, not that night's, and an estimated
   entry latitude (42° N).
 - Huygens runs without planet rotation, worth at most 17 m/s against a
   6 km/s entry.
-- Mass is constant: no ablation.
+- Mass is constant: no ablation. No 3-D flight, attitude dynamics or
+  Mach-dependent drag.
 
-Not included: 3-D flight, attitude dynamics, Mach-dependent drag.
+</details>
 
 ## Use
 
@@ -138,7 +139,8 @@ Not included: 3-D flight, attitude dynamics, Mach-dependent drag.
 pip install -r requirements.txt   # exact tested versions
 pip install -e .
 pytest                            # 69 tests
-python examples/showcase.py       # regenerates every figure, about 6 minutes
+python examples/showcase.py       # all figures but Figure 1, about 8 minutes
+python examples/equations.py      # Figure 1; needs LaTeX with dvipng
 ```
 
 ```python

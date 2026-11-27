@@ -1,13 +1,15 @@
 """Figures for the README. Run: python examples/showcase.py
 
-  three_worlds.png        Figure 1  convective vs radiative peak heating
-  size_effect.png         Figure 2  radiative share vs nose radius
-  validation.png          Figure 3  model minus flight, with Monte Carlo spread
-  stardust_entry.png      Figure 4  Stardust entry profile
-  pathfinder_entry.png    Figure 5  Pathfinder entry profile
-  huygens_entry.png       Figure 6  Huygens entry profile
-  stardust_corridor.png   Figure 7  Stardust entry corridor
-  pathfinder_corridor.png Figure 8  Pathfinder heating map
+  (equations.png          Figure 1  heating models; made by examples/equations.py)
+  validation.png          Figure 2  model minus flight, with Monte Carlo spread
+  three_worlds.png        Figure 3  convective vs radiative peak heating, as flown
+  design_map.png          Figure 4  which heating dominates, speed x nose radius
+  nose_trade.png          Figure 5  peak heating vs nose radius, with the optimum
+  stardust_entry.png      Figure A1 Stardust entry profile
+  pathfinder_entry.png    Figure A2 Pathfinder entry profile
+  huygens_entry.png       Figure A3 Huygens entry profile
+  stardust_corridor.png   Figure A4 Stardust entry corridor
+  pathfinder_corridor.png Figure A5 Pathfinder heating map
 
 Each figure carries its caption at the bottom and no title.
 """
@@ -294,47 +296,111 @@ def three_worlds(runs, filename, number, caption):
     save(fig, filename)
 
 
-# --- Figure 2: size effect -------------------------------------------------
+# --- Figures 4-5: design map and nose-radius trade --------------------------
 
-def radiative_share(entry, nose_radius, t_end):
-    vehicle = replace(entry["vehicle"], nose_radius=nose_radius)
-    tr = simulate(**{**entry, "vehicle": vehicle}, t_end=t_end, dt_out=0.1)
-    return tr.peak_q_rad / (tr.peak_q_rad + tr.peak_q_conv)
+def nose_speed_grid(entry, convert, gamma, speeds, radii, t_end):
+    """Peak convective and radiative heating (W/cm^2) over entry speed x nose radius.
+
+    Speeds are space-fixed (m/s), converted to atmosphere-relative with `convert`
+    at the mission's space-fixed entry angle `gamma`. Only the nose radius
+    changes: mass, drag area and the rest of the capsule stay fixed.
+    """
+    conv = np.empty((len(radii), len(speeds)))
+    rad = np.empty_like(conv)
+    for j, v in enumerate(speeds):
+        v_rel, g_rel = convert(v, gamma)
+        for i, r in enumerate(radii):
+            run = {**entry, "v0": float(v_rel), "gamma0": float(g_rel),
+                   "vehicle": replace(entry["vehicle"], nose_radius=r)}
+            tr = simulate(**run, t_end=t_end, dt_out=0.2, stop_altitude=5e3, rtol=1e-8)
+            conv[i, j], rad[i, j] = tr.peak_q_conv / 1e4, tr.peak_q_rad / 1e4
+    return conv, rad
 
 
-def size_figure(cases, titan, filename, number, caption):
-    """cases: (world, color, entry, t_end). titan: (radius, low share, high share)."""
-    fig, a = new_figure(7.4, 3.6, caption, number)
-    a.axhline(50, color=GRAPHITE, lw=0.9, ls=DASH)
-    crossings = {}
-    for world, color, entry, t_end in cases:
-        flown = entry["vehicle"].nose_radius
-        lo, hi = entry["body"].radiative.valid["nose_radius"]
-        radii = np.geomspace(lo, hi, 40)
-        share = np.array([100 * radiative_share(entry, r, t_end) for r in radii])
-        a.plot(radii, share, color=color)
-        f = 100 * radiative_share(entry, flown, t_end)
-        if flown < lo:
-            a.plot([flown, lo], [f, share[0]], color=color, ls=(0, (1.5, 2)))
-        a.plot(flown, f, "o", color=color, ms=6.5, mec=BG, mew=1.2)
-        cross = np.interp(50, share, radii)
-        crossings[world] = cross
-        a.plot(cross, 50, "o", ms=6.5, mfc=BG, mec=color, mew=1.6)
-        a.annotate(f"{cross:.1f} m", (cross, 50), xytext=(7, -6), textcoords="offset points",
-                   ha="left", va="top", color=color, fontsize=8.5)
-        end_label(a, radii[-1], share[-1], world, color, dx=6)
-    radius, low, high = titan
-    a.errorbar(radius, (low + high) / 2, yerr=(high - low) / 2, fmt="none", ecolor=IRIS,
-               elinewidth=2, capsize=5, capthick=2)
-    end_label(a, radius, high, "Titan, Huygens\n" + f"{low:.0f}–{high:.0f}%", IRIS,
-              dx=-9, dy=-8, ha="right")
-    a.set_xscale("log")
-    a.set_xticks([0.1, 0.3, 1, 3, 10, 30], ["0.1", "0.3", "1", "3", "10", "30"])
+def _best_radius(radii, total):
+    """Nose radius minimizing total heating; parabola in log radius. NaN at the edges."""
+    i = int(np.argmin(total))
+    if i in (0, len(radii) - 1):
+        return np.nan
+    x, y = np.log(radii[i - 1:i + 2]), total[i - 1:i + 2]
+    c = np.polyfit(x, y, 2)
+    return float(np.exp(-c[1] / (2 * c[0])))
+
+
+def design_map(worlds, titan, filename, number, caption):
+    """worlds: (name, color, grid kwargs, flown speed km/s, flown radius m, label).
+
+    titan: (speed km/s, radius m, low share %, high share %).
+    """
+    fig, a = new_figure(7.4, 4.0, caption, number)
+    for name, color, kw, v_flown, r_flown, label in worlds:
+        conv, rad = nose_speed_grid(**kw)
+        share = 100 * rad / (rad + conv)
+        V, R = kw["speeds"] / 1e3, kw["radii"]
+        a.add_patch(plt.Rectangle((V[0], R[0]), V[-1] - V[0], R[-1] - R[0], fill=False,
+                                  ec=RULE, lw=0.8, ls=DASH, zorder=1))
+        a.contourf(V, R, share, levels=[50, 100], colors=[color], alpha=0.13, zorder=1)
+        cs = a.contour(V, R, share, levels=[50], colors=[color], linewidths=1.8, zorder=3)
+        best = np.array([_best_radius(R, conv[:, j] + rad[:, j]) for j in range(len(V))])
+        a.plot(V, best, color=color, ls=DASH, lw=1.4, zorder=3)
+        a.plot(v_flown, r_flown, "o", ms=7, mfc=BG, mec=color, mew=1.6, zorder=4)
+        a.annotate(label, (v_flown, r_flown), xytext=(0, -11), textcoords="offset points",
+                   ha="center", va="top", color=color, fontsize=8.5)
+        a.text(V[-1], R[-1] * 1.08, name, ha="right", va="bottom", color=color, fontsize=9.5,
+               fontweight="bold")
+        a.text(V[-1] - 0.08, R[-1] / 1.15, "radiation\nlarger", ha="right", va="top",
+               color=GRAPHITE, fontsize=8, zorder=5)
+        a.text(V[0] + 0.08, R[0] * 1.12, "convection\nlarger", ha="left", va="bottom",
+               color=GRAPHITE, fontsize=8, zorder=5)
+    v, r, low, high = titan
+    a.plot(v, r, "o", ms=7, mfc=BG, mec=IRIS, mew=1.6, zorder=4)
+    a.annotate(f"Huygens, Titan\nradiation {low:.0f}–{high:.0f}%", (v, r), xytext=(-8, 0),
+               textcoords="offset points", ha="right", va="center", color=IRIS, fontsize=8.5)
+    a.plot([], [], color=INK, lw=1.8, label="radiation = convection")
+    a.plot([], [], color=INK, lw=1.4, ls=DASH, label="least total heating")
+    a.legend(loc="upper left", bbox_to_anchor=(0.47, 1.0), fontsize=8, handlelength=2.2)
+    a.set_yscale("log")
+    a.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20], ["0.2", "0.5", "1", "2", "5", "10", "20"])
     a.minorticks_off()
-    a.set(xlim=(0.1, 60), ylim=(0, 75), xlabel="Nose radius (m)",
-          ylabel="Radiative share of peak heating (%)")
+    a.set(xlim=(4.2, 16.6), ylim=(0.15, 34), xlabel="Entry speed, space-fixed (km/s)",
+          ylabel="Nose radius (m)")
+    a.grid(False)
     save(fig, filename)
-    return crossings
+
+
+def nose_trade(worlds, filename, number, caption):
+    """worlds: (name, entry, t_end, radii, fit range, flown label). One panel each."""
+    fig, ax = new_figure(8.6, 3.0, caption, number, ncols=len(worlds))
+    best = {}
+    for a, letter, (name, entry, t_end, radii, fit, flown) in zip(ax, "ab", worlds):
+        q = np.array([[getattr(simulate(**{**entry, "vehicle": replace(entry["vehicle"],
+                                                                         nose_radius=r)},
+                                         t_end=t_end, dt_out=0.1), k) / 1e4
+                       for k in ("peak_q_conv", "peak_q_rad", "peak_q_total")] for r in radii])
+        inside = (radii >= fit[0]) & (radii <= fit[1])
+        a.plot(radii, q[:, 0], color=SLATE, ls=DASH, label="convective")
+        a.plot(radii[inside], q[inside, 1], color=RED, label="radiative")
+        a.plot(radii[radii <= fit[0]], q[radii <= fit[0], 1], color=RED, ls=(0, (1.5, 2)))
+        a.plot(radii, q[:, 2], color=INK, lw=2, label="total")
+        r_best = _best_radius(radii, q[:, 2])
+        q_best = np.interp(np.log(r_best), np.log(radii), q[:, 2])
+        best[name] = (r_best, q_best)
+        a.plot(r_best, q_best, "o", ms=7, mfc=BG, mec=INK, mew=1.6, zorder=4)
+        end_label(a, r_best, q_best, f"best {r_best:.1f} m", INK, dx=0, dy=-12, ha="center")
+        r0 = entry["vehicle"].nose_radius
+        a.axvline(r0, color=GRAPHITE, lw=0.8, ls=(0, (1, 2)))
+        a.text(r0 * 1.04, 0.42, flown, transform=a.get_xaxis_transform(), ha="left",
+               va="bottom", rotation=90, color=GRAPHITE, fontsize=8.5)
+        a.set_xscale("log")
+        a.minorticks_off()
+        ticks = [t for t in (0.2, 0.5, 1, 2, 5, 10, 20) if radii[0] <= t <= radii[-1]]
+        a.set_xticks(ticks, [f"{t:g}" for t in ticks])
+        a.set(xlabel="Nose radius (m)", ylim=(0, 1.08 * q[:, 2].max()))
+        panel_label(a, letter, name)
+    ax[0].set_ylabel("Peak heating at the nose (W/cm²)")
+    ax[0].legend(loc="upper right", fontsize=8, handlelength=1.8)
+    save(fig, filename)
+    return best
 
 
 # --- Figure 3: validation --------------------------------------------------
@@ -378,7 +444,7 @@ def main(corridors=True):
     SF, PF, HF = STARDUST_FLIGHT, PATHFINDER_FLIGHT, HUYGENS_FLIGHT
 
     sd = entry_figure(
-        STARDUST_ENTRY, "stardust_entry.png", 4,
+        STARDUST_ENTRY, "stardust_entry.png", "A1",
         "Stardust at Earth, entering at 12.9 km/s and −8.2°. (a) Altitude against airspeed; "
         "open circle: flight altitude at drogue deploy. (b) Heating at the nose; dashed: "
         "1200 W/cm² design limit. (c) Deceleration; open circle: flight peak; dashed: "
@@ -388,7 +454,7 @@ def main(corridors=True):
     report("Stardust", sd)
 
     pf = entry_figure(
-        PATHFINDER_ENTRY, "pathfinder_entry.png", 5,
+        PATHFINDER_ENTRY, "pathfinder_entry.png", "A2",
         "Mars Pathfinder, entering at 7.26 km/s and −14.1°. (a) Altitude against airspeed; "
         "open circle: flight altitude at parachute deploy (approximate). (b) Heating at the "
         "nose. (c) Deceleration; open circle: flight peak, reported as 16 g.",
@@ -397,7 +463,7 @@ def main(corridors=True):
     report("Pathfinder", pf)
 
     hy = entry_figure(
-        HUYGENS_ENTRY, "huygens_entry.png", 6,
+        HUYGENS_ENTRY, "huygens_entry.png", "A3",
         "Huygens at Titan, entering at 6.03 km/s and −65.5°. (a) Altitude against airspeed; "
         "open circle: last record of the measured entry profile. (b) Heating at the nose, "
         "with NASA design-study points (blue: convective; red circles and squares: "
@@ -414,21 +480,41 @@ def main(corridors=True):
     three_worlds(
         [("Earth", "Stardust", 12.9, sd, None), ("Mars", "Pathfinder", 7.3, pf, None),
          ("Titan", "Huygens", 6.0, hy, hy_up)],
-        "three_worlds.png", 1,
+        "three_worlds.png", 3,
         "Peak heating at the nose as flown: convective (hatched) and radiative (filled), "
         f"W/cm². Radiative share: Earth {share_pct(sd, sd):.0f}%, Mars {share_pct(pf, pf):.0f}%, "
         f"Titan {share_pct(hy, hy):.0f}–{share_pct(hy, hy_up):.0f}%. Titan's whisker runs to "
         "the older CN radiation model.")
 
-    size_figure(
-        [("Earth", SLATE, STARDUST_ENTRY, 140), ("Mars", BRASS, PATHFINDER_ENTRY, PF["chute_time"])],
-        (HUYGENS_ENTRY["vehicle"].nose_radius, share_pct(hy, hy), share_pct(hy, hy_up)),
-        "size_effect.png", 2,
-        "Radiative share of peak heating against nose radius, with each trajectory fixed: "
-        "Stardust's at Earth, Pathfinder's at Mars. Solid: radii the radiative fit covers; "
-        "dotted: extension to the flown capsule (filled dot). Above the dashed line radiation "
-        "exceeds convection. Titan: one point at Huygens' 1.25 m nose, a range because two CN "
-        "radiation models disagree; no curve, since Titan heating data exists for that size only.")
+    design_map(
+        [("Earth", SLATE, dict(entry=STARDUST_ENTRY, convert=stardust_convert,
+                               gamma=STARDUST_INERTIAL["gamma"],
+                               speeds=np.linspace(10e3, 16e3, 13),
+                               radii=np.geomspace(0.3, 3.0, 15), t_end=200),
+          12.9, STARDUST_ENTRY["vehicle"].nose_radius, "Stardust"),
+         ("Mars", BRASS, dict(entry=PATHFINDER_ENTRY, convert=pathfinder_convert,
+                              gamma=PATHFINDER_INERTIAL["gamma"],
+                              speeds=np.linspace(6.5e3, 9e3, 11),
+                              radii=np.geomspace(1.0, 23.0, 15), t_end=250),
+          7.264, PATHFINDER_ENTRY["vehicle"].nose_radius, "Pathfinder")],
+        (6.03, HUYGENS_ENTRY["vehicle"].nose_radius, share_pct(hy, hy), share_pct(hy, hy_up)),
+        "design_map.png", 4,
+        "Which heating sets the design, over entry speed and nose radius. Solid line: radiation "
+        "equals convection; shaded side: radiation is larger. Dashed line: nose radius with "
+        "the least total peak heating. Each box spans the radiative fit's validity, with the "
+        "mission's entry angle and capsule held fixed apart from nose radius. Circles: flown "
+        "capsules. Titan has data at Huygens' size and speed only.")
+
+    best = nose_trade(
+        [("Earth, Stardust's entry", STARDUST_ENTRY, 140, np.geomspace(0.2, 3.0, 30),
+          (0.3, 3.0), "Stardust"),
+         ("Mars, Pathfinder's entry", PATHFINDER_ENTRY, PF["chute_time"],
+          np.geomspace(0.6, 23.0, 30), (1.0, 23.0), "Pathfinder")],
+        "nose_trade.png", 5,
+        "Peak heating against nose radius on each mission's trajectory. Blunting cuts "
+        "convective heating but raises radiative heating, so the total has a minimum near "
+        "where the two cross. Dotted radiative line: outside the fit's stated range.")
+    print("best nose radius:", {k: (round(v[0], 2), round(v[1])) for k, v in best.items()})
 
     s = SIGMA
     validation_figure(
@@ -436,7 +522,7 @@ def main(corridors=True):
          ("Pathfinder", PATHFINDER_ENTRY, PF["chute_time"], PF["peak_g"] * G0,
           PF["chute_altitude"]),
          ("Huygens", HUYGENS_ENTRY, HF["late_time"], HF["peak_decel"], HF["late_altitude"])],
-        "validation.png", 3,
+        "validation.png", 2,
         "Model minus flight. Dot: nominal run. Bar: central 95% of 400 runs with entry angle, "
         f"entry speed, drag coefficient and density perturbed (σ = {np.degrees(s['gamma']):.2f}°, "
         f"{100 * s['speed']:.1f}%, {100 * s['drag']:.0f}%, {100 * s['density']:.0f}%). "
@@ -445,7 +531,7 @@ def main(corridors=True):
 
     if corridors:
         corridor_figure(
-            STARDUST_ENTRY, STARDUST_INERTIAL, stardust_convert, "stardust_corridor.png", 7,
+            STARDUST_ENTRY, STARDUST_INERTIAL, stardust_convert, "stardust_corridor.png", "A4",
             "Peak heating for the Stardust capsule over entry speed and angle. Above the top "
             "curve it skips back out. Dashed: limits; below the 40 g curve it exceeds the "
             "deceleration limit, right of the 1200 W/cm² curve the heating limit. Open circle: "
@@ -455,7 +541,7 @@ def main(corridors=True):
             g_limit=40.0, q_limit=1200.0, g_label_at=(9.6, -12.2), q_label_at=(12.4, -13.0))
         corridor_figure(
             PATHFINDER_ENTRY, PATHFINDER_INERTIAL, pathfinder_convert, "pathfinder_corridor.png",
-            8,
+            "A5",
             "Peak heating for the Pathfinder capsule at Mars over entry speed and angle. Above "
             "the top curve it skips back out. Open circle: Pathfinder's entry.",
             speeds=np.linspace(4e3, 9e3, 41), angles_deg=np.linspace(-8.0, -24.0, 49),
