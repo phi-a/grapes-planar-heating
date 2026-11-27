@@ -133,9 +133,10 @@ Not included: 3-D flight, attitude dynamics, Mach-dependent drag.
 ## Use
 
 ```
-pip install -e ".[dev]"
-pytest                        # 69 tests
-python examples/showcase.py   # regenerates every figure, about 6 minutes
+pip install -r requirements.txt   # exact tested versions
+pip install -e .
+pytest                            # 69 tests
+python examples/showcase.py       # regenerates every figure, about 6 minutes
 ```
 
 ```python
