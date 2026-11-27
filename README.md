@@ -12,11 +12,21 @@ small 2-D entry simulator, checked against three flown missions.
 
 ## Two heating laws
 
-![Heating models with color-coded inputs](docs/figures/equations.png)
+Stagnation-point heat flux, with freestream density $\rho$, speed $V$ and
+nose radius $R_n$, in SI units:
 
-Convection falls with nose radius; radiation rises with it, and climbs much
-faster with speed. Their ratio is the whole story: larger, faster and denser
-entries tilt toward radiation.
+$$q_c = k\sqrt{\frac{\rho}{R_n}}\,V^3 \qquad \text{convective (Sutton–Graves)}$$
+
+$$q_r = C\,R_n^{\,a}\,\rho^{\,b}\,f(V) \qquad \text{radiative (Tauber–Sutton)}$$
+
+$k$, $C$, $a$, $b$ and the tabulated $f(V)$ depend on the gas. At Earth,
+$b = 1.22$, $a \le 1$, and $f(V)$ grows about as $V^7$ from 11 to 16 km/s;
+at Mars, $a = 0.53$ and $b = 1.19$. Titan uses a fit to three published
+points. Dividing the two:
+
+$$\frac{q_r}{q_c} \propto R_n^{\,a + 1/2}\,\rho^{\,b - 1/2}\,\frac{f(V)}{V^3}$$
+
+Radiation gains on convection with nose radius, density and speed.
 
 ## Is the model right?
 
@@ -35,10 +45,10 @@ Stardust's pre-flight design value (Details).
 ![Convective vs radiative peak heating at three worlds](docs/figures/three_worlds.png)
 
 Huygens, the slowest entry, has the largest radiative share. Part of that is
-size: its nose is more than five times Stardust's. At the same 1.25 m nose, Earth on
-Stardust's trajectory reaches 47% and Mars 8%. **Titan matches Earth at half
-the speed**: its nitrogen–methane air forms CN behind the shock, a strong
-radiator.
+size: its nose is more than five times Stardust's. At the same 1.25 m nose,
+Earth on Stardust's trajectory reaches 47% and Mars 8%, so Titan at 6 km/s
+matches Earth at 12.9 km/s. Titan's nitrogen–methane atmosphere forms CN
+behind the shock, and CN radiates strongly.
 
 ## Where radiation takes over
 
@@ -54,9 +64,9 @@ radiator.
 
 ![Peak heating against nose radius](docs/figures/nose_trade.png)
 
-**Blunt the nose until radiation takes over, then stop.** A blunter nose
-cuts convective heating but adds radiative heating, so total peak heating
-has a minimum close to the crossover.
+A blunter nose lowers convective heating and raises radiative heating, so
+total peak heating has a minimum, close to the nose radius where the two are
+equal.
 
 - **Earth sample return:** on Stardust's entry the best nose is 1.7 m, with
   32% less peak heating than the flown 0.23 m. At 16 km/s the crossover drops
@@ -139,8 +149,7 @@ the nose radius.
 pip install -r requirements.txt   # exact tested versions
 pip install -e .
 pytest                            # 69 tests
-python examples/showcase.py       # all figures but Figure 1, about 8 minutes
-python examples/equations.py      # Figure 1; needs LaTeX with dvipng
+python examples/showcase.py       # regenerates every figure, about 8 minutes
 ```
 
 ```python

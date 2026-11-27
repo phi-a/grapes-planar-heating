@@ -1,10 +1,9 @@
 """Figures for the README. Run: python examples/showcase.py
 
-  (equations.png          Figure 1  heating models; made by examples/equations.py)
-  validation.png          Figure 2  model minus flight, with Monte Carlo spread
-  three_worlds.png        Figure 3  convective vs radiative peak heating, as flown
-  design_map.png          Figure 4  which heating dominates, speed x nose radius
-  nose_trade.png          Figure 5  peak heating vs nose radius, with the optimum
+  validation.png          Figure 1  model minus flight, with Monte Carlo spread
+  three_worlds.png        Figure 2  convective vs radiative peak heating, as flown
+  design_map.png          Figure 3  which heating dominates, speed x nose radius
+  nose_trade.png          Figure 4  peak heating vs nose radius, with the optimum
   stardust_entry.png      Figure A1 Stardust entry profile
   pathfinder_entry.png    Figure A2 Pathfinder entry profile
   huygens_entry.png       Figure A3 Huygens entry profile
@@ -480,7 +479,7 @@ def main(corridors=True):
     three_worlds(
         [("Earth", "Stardust", 12.9, sd, None), ("Mars", "Pathfinder", 7.3, pf, None),
          ("Titan", "Huygens", 6.0, hy, hy_up)],
-        "three_worlds.png", 3,
+        "three_worlds.png", 2,
         "Peak heating at the nose as flown: convective (hatched) and radiative (filled), "
         f"W/cm². Radiative share: Earth {share_pct(sd, sd):.0f}%, Mars {share_pct(pf, pf):.0f}%, "
         f"Titan {share_pct(hy, hy):.0f}–{share_pct(hy, hy_up):.0f}%. Titan's whisker runs to "
@@ -498,7 +497,7 @@ def main(corridors=True):
                               radii=np.geomspace(1.0, 23.0, 15), t_end=250),
           7.264, PATHFINDER_ENTRY["vehicle"].nose_radius, "Pathfinder")],
         (6.03, HUYGENS_ENTRY["vehicle"].nose_radius, share_pct(hy, hy), share_pct(hy, hy_up)),
-        "design_map.png", 4,
+        "design_map.png", 3,
         "Which heating sets the design, over entry speed and nose radius. Solid line: radiation "
         "equals convection; shaded side: radiation is larger. Dashed line: nose radius with "
         "the least total peak heating. Each box spans the radiative fit's validity, with the "
@@ -510,7 +509,7 @@ def main(corridors=True):
           (0.3, 3.0), "Stardust"),
          ("Mars, Pathfinder's entry", PATHFINDER_ENTRY, PF["chute_time"],
           np.geomspace(0.6, 23.0, 30), (1.0, 23.0), "Pathfinder")],
-        "nose_trade.png", 5,
+        "nose_trade.png", 4,
         "Peak heating against nose radius on each mission's trajectory. Blunting cuts "
         "convective heating but raises radiative heating, so the total has a minimum near "
         "where the two cross. Dotted radiative line: outside the fit's stated range.")
@@ -522,7 +521,7 @@ def main(corridors=True):
          ("Pathfinder", PATHFINDER_ENTRY, PF["chute_time"], PF["peak_g"] * G0,
           PF["chute_altitude"]),
          ("Huygens", HUYGENS_ENTRY, HF["late_time"], HF["peak_decel"], HF["late_altitude"])],
-        "validation.png", 2,
+        "validation.png", 1,
         "Model minus flight. Dot: nominal run. Bar: central 95% of 400 runs with entry angle, "
         f"entry speed, drag coefficient and density perturbed (σ = {np.degrees(s['gamma']):.2f}°, "
         f"{100 * s['speed']:.1f}%, {100 * s['drag']:.0f}%, {100 * s['density']:.0f}%). "
