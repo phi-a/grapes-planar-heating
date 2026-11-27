@@ -18,7 +18,7 @@ class CorridorMap:
     peak_q_rad: np.ndarray  # W/m^2
     peak_q_total: np.ndarray  # W/m^2, peak of convective + radiative
     peak_g: np.ndarray  # Earth g
-    heat_load: np.ndarray  # J/m^2
+    heat_load: np.ndarray  # J/m^2, convective
     skipped: np.ndarray  # bool
 
 

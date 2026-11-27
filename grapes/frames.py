@@ -1,16 +1,14 @@
 """Entry-state conversions between the space-fixed and rotating frames.
 
-The planar model flies relative to the atmosphere and knows nothing about
-planet rotation. Published entry states are usually space-fixed ("inertial"),
-so convert once, up front:
+The planar model flies relative to the atmosphere. Published entry states are
+usually space-fixed ("inertial"), so convert once, up front:
 
     v, gamma, _ = inertial_to_relative(EARTH, h0, v_inertial, gamma_inertial,
                                        latitude, azimuth)
     simulate(EARTH, vehicle, h0, v, gamma, ...)
 
-This captures the main effect of rotation on heating and loads (the airspeed
-at entry). It does not capture Coriolis drift during the entry; that needs
-the 3-D model.
+Rotation during the entry (Coriolis and centrifugal terms) is added by
+passing latitude and azimuth to simulate(); see planar.py.
 """
 from __future__ import annotations
 

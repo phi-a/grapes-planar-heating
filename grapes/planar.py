@@ -7,7 +7,7 @@ atmosphere.
 Planet rotation is optional. Give simulate() the entry latitude and heading
 and it adds the Coriolis and centrifugal terms that act in the entry plane,
 holding latitude and heading at their entry values. Leave them out for a
-non-rotating planet. Turning out of the plane needs the 3-D model.
+non-rotating planet. Motion out of the entry plane is not modeled.
 """
 from __future__ import annotations
 

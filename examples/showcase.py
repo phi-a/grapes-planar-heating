@@ -1,4 +1,4 @@
-"""Portfolio figures from the 2-D model. Run: python examples/showcase.py
+"""Figures for the README. Run: python examples/showcase.py
 
   stardust_entry.png      - Stardust at Earth: trajectory, heating, deceleration
   stardust_corridor.png   - why Stardust came in at -8.2 deg: the entry corridor

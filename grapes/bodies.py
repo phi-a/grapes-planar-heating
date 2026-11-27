@@ -18,7 +18,7 @@ class Body:
     mu: float  # m^3/s^2, gravitational parameter
     atmosphere: Any  # anything with .density(h); see atmosphere.py
     k_sutton_graves: float  # sqrt(kg)/m, convective coefficient for this gas mix
-    rotation_rate: float = 0.0  # rad/s, used only by frames.py and the 3-D model
+    rotation_rate: float = 0.0  # rad/s; used by frames.py and simulate(latitude=, azimuth=)
     radiative: Any = None  # anything with .rate(rho, v, nose_radius); see heating.py
 
     def density(self, h):
@@ -33,7 +33,6 @@ class Body:
 
 
 # Convective coefficients from Sutton & Graves (1971); see heating.py.
-# TODO: confirm k_sutton_graves values against Sutton & Graves (1971).
 EARTH = Body(
     name="Earth",
     radius=6378.1e3,
@@ -49,7 +48,7 @@ MARS = Body(
     radius=3396.2e3,
     mu=4.2830e13,
     atmosphere=Exponential(rho0=0.02, scale_height=11100.0),
-    k_sutton_graves=1.898e-4,
+    k_sutton_graves=sutton_graves_coefficient(dict(CO2=0.97, N2=0.03)),
     rotation_rate=7.0882360e-5,
     radiative=TAUBER_SUTTON_MARS,
 )

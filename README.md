@@ -14,18 +14,28 @@ of an entry capsule?
 
 ## Answer
 
-**1. The atmosphere matters more than the speed.**
+**1. At equal size, Titan radiates like Earth at half the speed.**
 
 ![Convective vs radiative peak heating at three worlds](docs/figures/three_worlds.png)
 
-| Mission | Entry speed | Radiative share |
-|---|---|---|
-| Stardust, Earth | 12.9 km/s | 15% |
-| Pathfinder, Mars | 7.3 km/s | 4% |
-| Huygens, Titan | 6.0 km/s | 47–61% |
+| As flown | Entry speed | Nose radius | Radiative share |
+|---|---|---|---|
+| Stardust, Earth | 12.9 km/s | 0.23 m | 15% |
+| Pathfinder, Mars | 7.3 km/s | 0.66 m | 4% |
+| Huygens, Titan | 6.0 km/s | 1.25 m | 47–61% |
 
-The slowest entry has the largest share. Titan's nitrogen–methane atmosphere
-forms CN behind the shock, and CN radiates strongly.
+The capsules differ in size, which matters (finding 2). At Huygens' 1.25 m
+nose radius:
+
+| Same size | Entry speed | Radiative share |
+|---|---|---|
+| Earth, Stardust's trajectory | 12.9 km/s | 47% |
+| Mars, Pathfinder's trajectory | 7.3 km/s | 8% |
+| Titan, Huygens | 6.0 km/s | 47–61% |
+
+Titan matches or exceeds Earth's radiative share at less than half the speed. Its
+nitrogen–methane atmosphere forms CN behind the shock, and CN radiates
+strongly. Mars, at a similar speed, radiates little.
 
 **2. Size matters.**
 
@@ -47,14 +57,15 @@ Each mission starts from its published entry state. No parameter is tuned.
 
 ![Model minus flight with Monte Carlo spread](docs/figures/validation.png)
 
-- **Accuracy:** peak deceleration is 1–3% below flight on all three missions,
-  a consistent low bias.
+- **Accuracy:** peak deceleration is 1.2–3.3% below flight on all three
+  missions, a consistent low bias.
 - **Precision:** bars show the central 95% of 400 runs with entry angle
   (σ = 0.05°), entry speed (0.1%), drag coefficient (2%) and density (5%)
   perturbed. These σ values are assumptions.
 - Flight lies inside the bar for Pathfinder, at its edge for Stardust and
   outside it for Huygens. Input uncertainty alone does not explain the
-  Huygens bias.
+  Huygens bias. Two flight values are approximate: Pathfinder's are rounded
+  in the source, and Huygens' peak is read from a published plot.
 
 | Mission | Quantity | grapes | Flight |
 |---|---|---|---|
@@ -75,8 +86,9 @@ estimates:
 | Huygens, convective | 31 W/cm² | 34–39 W/cm² (design study) |
 | Huygens, radiative | 28–49 W/cm² | 21–67 W/cm² (design study) |
 
-The equations of motion also reproduce the Allen–Eggers closed-form ballistic
-entry to better than one part in a million.
+Under the Allen–Eggers assumptions (no gravity, flat planet), the equations
+of motion reproduce their closed-form ballistic entry to better than one part
+in a million.
 
 <details>
 <summary>Entry profiles and corridor maps</summary>
@@ -112,6 +124,8 @@ entry to better than one part in a million.
   so their deceleration match is a consistency check, not an independent test.
 - Stardust uses the standard atmosphere, not that night's, and an estimated
   entry latitude (42° N).
+- Huygens runs without planet rotation, worth at most 17 m/s against a
+  6 km/s entry.
 - Mass is constant: no ablation.
 
 Not included: 3-D flight, attitude dynamics, Mach-dependent drag.
@@ -120,7 +134,7 @@ Not included: 3-D flight, attitude dynamics, Mach-dependent drag.
 
 ```
 pip install -e ".[dev]"
-pytest                        # 68 tests
+pytest                        # 69 tests
 python examples/showcase.py   # regenerates every figure, about 6 minutes
 ```
 

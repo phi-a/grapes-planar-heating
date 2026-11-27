@@ -88,3 +88,25 @@ def test_radiative_share_grows_with_nose_radius():
     assert earth == sorted(earth) and mars == sorted(mars)
     assert earth[0] < 0.5 < earth[2]  # crossover inside the Earth fit's range
     assert mars[0] < 0.5 < mars[2]
+
+
+def test_at_huygens_size_titan_matches_earth_at_half_the_speed():
+    from dataclasses import replace
+    from grapes import TITAN
+    from grapes.cases import HUYGENS_ENTRY, PATHFINDER_ENTRY
+    from grapes.heating import TITAN_HUYGENS_BOLTZMANN
+
+    def share(entry, t_end, body=None):
+        run = {**entry, "vehicle": replace(entry["vehicle"], nose_radius=1.25)}
+        if body is not None:
+            run["body"] = body
+        tr = simulate(**run, t_end=t_end)
+        return tr.peak_q_rad / (tr.peak_q_rad + tr.peak_q_conv)
+
+    earth = share(STARDUST_ENTRY, 140)
+    mars = share(PATHFINDER_ENTRY, 171)
+    titan_low = share(HUYGENS_ENTRY, 267.7)
+    titan_high = share(HUYGENS_ENTRY, 267.7, replace(TITAN, radiative=TITAN_HUYGENS_BOLTZMANN))
+    assert earth == pytest.approx(0.47, abs=0.01)
+    assert mars == pytest.approx(0.08, abs=0.01)
+    assert titan_low >= earth - 0.005 and titan_high > earth

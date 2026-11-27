@@ -142,7 +142,7 @@ _vel = np.array([5.704492, 1.918924, 0.390306]) * 1e3  # m/s
 HUYGENS_INERTIAL = dict(
     h0=float(np.linalg.norm(_r) - TITAN.radius),  # 1270 km
     v=float(np.linalg.norm(_vel)),  # 6031 m/s
-    gamma=float(np.arcsin(_r @ _vel / (np.linalg.norm(_r) * np.linalg.norm(_vel)))),  # -65.6 deg
+    gamma=float(np.arcsin(_r @ _vel / (np.linalg.norm(_r) * np.linalg.norm(_vel)))),  # -65.5 deg
 )
 
 # Titan turns so slowly (about 17 m/s at entry altitude) that rotation is
