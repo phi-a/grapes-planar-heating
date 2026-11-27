@@ -14,7 +14,7 @@ of an entry capsule?
 
 ## Answer
 
-**1. At equal size, Titan radiates like Earth at half the speed.**
+**1. At equal size, Titan radiates like Earth at half the speed**
 
 ![Convective vs radiative peak heating at three worlds](docs/figures/three_worlds.png)
 
@@ -37,7 +37,7 @@ Titan matches or exceeds Earth's radiative share at less than half the speed. It
 nitrogen–methane atmosphere forms CN behind the shock, and CN radiates
 strongly. Mars, at a similar speed, radiates little.
 
-**2. Size matters.**
+**2. Larger noses shift the heating toward radiation**
 
 ![Radiative share vs nose radius](docs/figures/size_effect.png)
 
@@ -45,8 +45,10 @@ Convective heating falls as 1/√(nose radius); radiative heating rises with it.
 On the same trajectory, radiation becomes the larger peak at a nose radius of
 about 1.4 m at Earth (Stardust's entry) and 13 m at Mars (Pathfinder's).
 
-**3. At Earth, speed matters too.** For the Stardust capsule at −8.2°, the
-share is 15% at 12.9 km/s, 24% at 14 km/s and 37% at 16 km/s.
+**3. At Earth, faster entries radiate more**
+
+For the Stardust capsule at −8.2°, the radiative share is 15% at 12.9 km/s,
+24% at 14 km/s and 37% at 16 km/s.
 
 *Radiative share* = radiative peak ÷ (radiative peak + convective peak). The
 two peaks occur a few seconds apart.

@@ -324,8 +324,10 @@ def size_figure(cases, titan, filename, number, caption):
                    ha="left", va="top", color=color, fontsize=8.5)
         end_label(a, radii[-1], share[-1], world, color, dx=6)
     radius, low, high = titan
-    a.plot([radius, radius], [low, high], color=IRIS, lw=2.4, solid_capstyle="butt")
-    end_label(a, radius, (low + high) / 2, "Titan", IRIS, dx=-7, ha="right")
+    a.errorbar(radius, (low + high) / 2, yerr=(high - low) / 2, fmt="none", ecolor=IRIS,
+               elinewidth=2, capsize=5, capthick=2)
+    end_label(a, radius, high, "Titan, Huygens\n" + f"{low:.0f}–{high:.0f}%", IRIS,
+              dx=-9, dy=-8, ha="right")
     a.set_xscale("log")
     a.set_xticks([0.1, 0.3, 1, 3, 10, 30], ["0.1", "0.3", "1", "3", "10", "30"])
     a.minorticks_off()
@@ -425,7 +427,8 @@ def main(corridors=True):
         "Radiative share of peak heating against nose radius, with each trajectory fixed: "
         "Stardust's at Earth, Pathfinder's at Mars. Solid: radii the radiative fit covers; "
         "dotted: extension to the flown capsule (filled dot). Above the dashed line radiation "
-        "exceeds convection. Titan: Huygens' size only; the bar spans two CN models.")
+        "exceeds convection. Titan: one point at Huygens' 1.25 m nose, a range because two CN "
+        "radiation models disagree; no curve, since Titan heating data exists for that size only.")
 
     s = SIGMA
     validation_figure(
