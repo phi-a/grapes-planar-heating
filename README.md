@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/logo.png" alt="grapes: a bunch of low hanging fruits" width="240"></p>
+<p align="center"><img src="docs/logo_icon.png" alt="grapes logo" width="160"></p>
 
 # grapes
 
