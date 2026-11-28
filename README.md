@@ -71,7 +71,7 @@ for all three. Heating was never measured in flight. Against published
 estimates the model is within 20% for Pathfinder and Huygens, and 30% below
 Stardust's pre-flight design value (Details).
 
-## How much of the heating is radiation?
+## Radiative Heating Fraction
 
 On each probe's real trajectory and nose:
 
