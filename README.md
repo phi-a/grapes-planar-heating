@@ -91,24 +91,21 @@ behind the shock, and CN radiates strongly.
 | Mars, 7 → 9 km/s | 18 m → 5.5 m |
 | Titan, 6 km/s | Huygens' own 1.25 m |
 
-## Engineering takeaway
+## How blunt should the nose be?
 
 ![Peak heating against nose radius](docs/figures/nose_trade.png)
 
-A blunter nose lowers convective heating and raises radiative heating, so
-total peak heating has a minimum, close to the nose radius where the two are
-equal.
+Blunt until radiative heating matches convective heating, then stop. A
+blunter nose lowers convective heating and raises radiative heating, so total
+peak heating is lowest close to the nose radius where the two are equal.
 
-- **Earth sample return:** on Stardust's entry the best nose is 1.7 m, with
-  32% less peak heating than the flown 0.23 m. At 16 km/s the crossover drops
-  below half a metre, so fast returns must be sized for radiation.
-- **Mars:** the crossover sits at 5–18 m, beyond any flown aeroshell.
-  Convection sizes Mars heatshields; radiation is a margin.
-- **Titan:** Huygens already sits at the crossover. The disagreement between
-  CN radiation models (47–61%) is itself a design driver.
+- **Earth, on Stardust's entry:** about 1.7 m, with 32% less peak heating
+  than the 0.23 m it flew. At 16 km/s the answer drops below 0.5 m.
+- **Mars:** as blunt as the aeroshell allows. The crossover is 5–18 m,
+  larger than any flown, so convection sets the design.
+- **Titan:** about Huygens' own 1.25 m, which already sits at the crossover.
 
-These trades hold the trajectory, mass and drag area fixed and change only
-the nose radius.
+Trajectory, mass and drag area are held fixed; only the nose radius changes.
 
 ## Details
 
