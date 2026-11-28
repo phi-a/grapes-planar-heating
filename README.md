@@ -59,7 +59,7 @@ $$\frac{q_r}{q_c} \propto R_n^{\,a + 1/2}\,\rho^{\,b - 1/2}\,\frac{f(V)}{V^3}$$
 
 Radiation gains on convection with nose radius, density and speed.
 
-## Is the model right?
+## Model Verification
 
 Each mission starts from its published entry state. No parameter is tuned.
 
