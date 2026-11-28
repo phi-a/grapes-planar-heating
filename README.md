@@ -4,11 +4,11 @@
 
 **G**eneral **R**adiation **A**nd **P**lanetary **E**ntry **S**imulator
 
-A capsule entering an atmosphere is heated at its nose in two ways: hot gas
-conducts heat into the wall (convective heating), and hot gas glows
-(radiative heating). This project asks a design question: **when does
-radiation, rather than convection, set the heatshield?** It answers with a
-small 2-D entry simulator, checked against three flown missions.
+grapes is a small planetary entry simulator. It flies a capsule through the
+atmospheres of Earth, Mars and Titan in two dimensions and computes the
+heating at its nose, from both hot-gas conduction and radiation. I built it
+to learn how to model a space system end to end: write the physics, check it
+against real flights, then use it to answer a design question.
 
 ## Background
 
