@@ -144,7 +144,10 @@ Trajectory, mass and drag area are held fixed; only the nose radius changes.
 - **Convective heating:** Sutton–Graves, with the coefficient computed from
   each atmosphere's composition.
 - **Radiative heating:** Tauber–Sutton at Earth and Mars. At Titan, a fit to
-  three published points for Huygens, bracketed by two CN models.
+  three published points for Huygens. CN behind the shock radiates
+  strongly. The newer non-Boltzmann model, the default, follows how
+  collisions fill each energy level; the older Boltzmann model assumes
+  equilibrium and predicts more radiation.
 - **Drag:** constant hypersonic coefficient per capsule.
 - **Uncertainty:** Monte Carlo over four inputs (`grapes/dispersion.py`).
 - **Verification:** under the Allen–Eggers assumptions (no gravity, flat

@@ -6,4 +6,4 @@ from .vehicle import Vehicle
 
 __all__ = ["BODIES", "EARTH", "MARS", "TITAN", "Body", "Exponential", "Table", "Trajectory",
            "Vehicle", "mars_pathfinder_1997", "simulate", "us_standard_1976"]
-__version__ = "1.5.0"
+__version__ = "1.6.0"
