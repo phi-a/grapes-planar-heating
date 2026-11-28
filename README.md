@@ -71,7 +71,9 @@ for all three. Heating was never measured in flight. Against published
 estimates the model is within 20% for Pathfinder and Huygens, and 30% below
 Stardust's pre-flight design value (Details).
 
-## As flown
+## Heating on each mission
+
+Each probe at its own size, on its own trajectory.
 
 ![Convective vs radiative peak heating at three worlds](docs/figures/three_worlds.png)
 
@@ -171,6 +173,66 @@ Trajectory, mass and drag area are held fixed; only the nose radius changes.
 
 </details>
 
+<details>
+<summary>References</summary>
+
+**Stardust**
+
+1. Desai, P. N., Mitcheltree, R. A., and Cheatwood, F. M., "Sample Returns
+   Missions in the Coming Decade," IAF Paper 00-Q.2.04, 51st International
+   Astronautical Congress, Rio de Janeiro, 2000.
+   [NTRS 20000109794](https://ntrs.nasa.gov/citations/20000109794)
+2. Desai, P. N., and Qualls, G. D., "Stardust Entry Reconstruction,"
+   AIAA Paper 2008-1198, 2008.
+   [NTRS 20080008567](https://ntrs.nasa.gov/citations/20080008567)
+3. Mitcheltree, R. A., Wilmoth, R. G., Cheatwood, F. M., Brauckmann, G. J.,
+   and Greene, F. A., "Aerodynamics of Stardust Sample Return Capsule,"
+   AIAA Paper 97-2304, 1997.
+   [NTRS 20040105538](https://ntrs.nasa.gov/citations/20040105538)
+
+**Mars Pathfinder**
+
+4. Braun, R. D., Spencer, D. A., Kallemeyn, P. H., and Vaughan, R. M.,
+   "Mars Pathfinder Atmospheric Entry Navigation Operations,"
+   AIAA Paper 97-3663, 1997 (NASA TM-112885).
+5. Gnoffo, P. A., Weilmuenster, K. J., Braun, R. D., and Cruz, C. I.,
+   "Effects of Sonic Line Transition on Aerothermodynamics of the Mars
+   Pathfinder Probe," AIAA Paper, 1995.
+6. Mars Pathfinder ASI/MET entry atmosphere profile,
+   MPFL-M-ASIMET-4-DDR-EDL-V1.0, NASA Planetary Data System.
+   [PDS](https://pds-atmospheres.nmsu.edu/PDS/data/mpam_0001/edl_ddr/)
+
+**Huygens**
+
+7. Striepe, S. A., Blanchard, R. C., Kirsch, M. F., and Fowler, W. T.,
+   "Huygens Titan Probe Trajectory Reconstruction Using Traditional Methods
+   and the Program to Optimize Simulated Trajectories II," AAS Paper 07-226,
+   17th AAS/AIAA Space Flight Mechanics Meeting, Sedona, AZ, 2007.
+   [NTRS 20070010747](https://ntrs.nasa.gov/citations/20070010747)
+8. Johnston, C. O., Hollis, B. R., and Sutton, K., "Radiative Heating
+   Methodology for the Huygens Probe," AIAA Paper 2006-3426, 2006.
+   [NTRS 20080008445](https://ntrs.nasa.gov/citations/20080008445)
+9. Kazeminejad, B., PhD thesis, University of Graz, 2005.
+   [ESA archive](https://archives.esac.esa.int/psa/ftp/CASSINI-HUYGENS/DTWG/HP-SSA-DTWG-6-TRAJECTORY-V2.0/DOCUMENT/KAZEMINEJAD_PHD_THESIS.PDF)
+10. Huygens HASI entry atmosphere profile, HP-SSA-HASI-2-3-4-MISSION-V1.1,
+    NASA Planetary Data System.
+    [PDS](https://atmos.nmsu.edu/PDS/data/PDS4/Huygens/hphasi_bundle/DATA/PROFILES/)
+
+**Models**
+
+11. Sutton, K., and Graves, R. A., "A General Stagnation-Point
+    Convective-Heating Equation for Arbitrary Gas Mixtures," NASA TR R-376,
+    1971. [NTRS 19720003329](https://ntrs.nasa.gov/citations/19720003329)
+12. Tauber, M. E., and Sutton, K., "Stagnation-Point Radiative Heating
+    Relations for Earth and Mars Entries," Journal of Spacecraft and Rockets,
+    Vol. 28, No. 1, 1991, pp. 40–42.
+13. Allen, H. J., and Eggers, A. J., "A Study of the Motion and Aerodynamic
+    Heating of Ballistic Missiles Entering the Earth's Atmosphere at High
+    Supersonic Speeds," NACA Report 1381, 1958.
+14. U.S. Standard Atmosphere, 1976, NOAA, NASA and USAF, Washington, DC, 1976.
+
+</details>
+
 ## Use
 
 ```
@@ -187,44 +249,6 @@ from grapes.cases import STARDUST_ENTRY
 traj = simulate(**STARDUST_ENTRY, t_end=140)
 print(traj.peak_q_total / 1e4, "W/cm^2")
 ```
-
-## Sources
-
-Stardust
-- Desai, Mitcheltree & Cheatwood, IAF-00-Q.2.04
-  ([NTRS 20000109794](https://ntrs.nasa.gov/api/citations/20000109794/downloads/20000109794.pdf))
-- Desai & Qualls, "Stardust Entry Reconstruction", AIAA 2008-1198
-  ([NTRS 20080008567](https://ntrs.nasa.gov/api/citations/20080008567/downloads/20080008567.pdf))
-- Mitcheltree et al., "Aerodynamics of Stardust Sample Return Capsule",
-  AIAA 97-2304
-  ([NTRS 20040105538](https://ntrs.nasa.gov/api/citations/20040105538/downloads/20040105538.pdf))
-
-Mars Pathfinder
-- Braun, Spencer, Kallemeyn & Vaughan, "Mars Pathfinder Atmospheric Entry
-  Navigation Operations", AIAA 97-3663 (NASA TM-112885)
-- Gnoffo, Weilmuenster, Braun & Cruz, "Effects of Sonic Line Transition on
-  Aerothermodynamics of the Mars Pathfinder Probe", AIAA, 1995
-- Entry atmosphere profile, NASA PDS
-  [MPFL-M-ASIMET-4-DDR-EDL-V1.0](https://pds-atmospheres.nmsu.edu/PDS/data/mpam_0001/edl_ddr/)
-
-Huygens
-- Striepe, Blanchard, Kirsch & Fowler, "Huygens Titan Probe Trajectory
-  Reconstruction", AAS 07-226
-  ([NTRS 20070010747](https://ntrs.nasa.gov/api/citations/20070010747/downloads/20070010747.pdf))
-- Johnston, Hollis & Sutton, "Radiative Heating Methodology for the Huygens
-  Probe", AIAA 2006-3426
-  ([NTRS 20080008445](https://ntrs.nasa.gov/api/citations/20080008445/downloads/20080008445.pdf))
-- Kazeminejad, PhD thesis, University of Graz, 2005
-  ([ESA archive](https://archives.esac.esa.int/psa/ftp/CASSINI-HUYGENS/DTWG/HP-SSA-DTWG-6-TRAJECTORY-V2.0/DOCUMENT/KAZEMINEJAD_PHD_THESIS.PDF))
-- Entry atmosphere profile, NASA PDS
-  [HP-SSA-HASI-2-3-4-MISSION-V1.1](https://atmos.nmsu.edu/PDS/data/PDS4/Huygens/hphasi_bundle/DATA/PROFILES/)
-
-Models
-- Sutton & Graves, NASA TR R-376, 1971
-  ([NTRS 19720003329](https://ntrs.nasa.gov/citations/19720003329))
-- Tauber & Sutton, J. Spacecraft and Rockets 28(1), 1991, pp. 40–42
-- Allen & Eggers, NACA Report 1381, 1958
-- U.S. Standard Atmosphere, 1976
 
 ## License
 
