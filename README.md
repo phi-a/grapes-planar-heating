@@ -16,8 +16,7 @@ grapes started as coursework: two semesters of graduate Planetary Entry
 (AE 598) under Dr. Zachary Putnam, plus an independent study, taken as an
 undergraduate. The original course project was a team effort with Chris
 Young and Michelle Zosky. This repository is my continuation of that work:
-the models, verification against flight data, figures and write-up. It was
-my entry point into modeling space systems.
+the models, verification against flight data, figures and write-up.
 
 **Skills developed**
 
