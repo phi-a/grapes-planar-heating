@@ -83,7 +83,7 @@ Earth on Stardust's trajectory reaches 47% and Mars 8%, so Titan at 6 km/s
 matches Earth at 12.9 km/s. Titan's nitrogen–methane atmosphere forms CN
 behind the shock, and CN radiates strongly.
 
-## Where radiation takes over
+## Radiation–Convection Crossover
 
 ![Design map over entry speed and nose radius](docs/figures/design_map.png)
 
