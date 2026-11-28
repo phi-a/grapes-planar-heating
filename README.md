@@ -10,6 +10,36 @@ conducts heat into the wall (convective heating), and hot gas glows
 radiation, rather than convection, set the heatshield?** It answers with a
 small 2-D entry simulator, checked against three flown missions.
 
+## Background
+
+grapes started as coursework: two semesters of graduate Planetary Entry
+(AE 598) under Dr. Zachary Putnam, plus an independent study, taken as an
+undergraduate. The original course project was a team effort with Chris
+Young and Michelle Zosky. This repository is my continuation of that work:
+the models, verification against flight data, figures and write-up. It was
+my entry point into modeling space systems.
+
+**Skills developed**
+
+- **Flight mechanics:** planar entry equations of motion, with
+  rotating-planet (Coriolis and centrifugal) terms and inertial-to-relative
+  state conversion
+- **Numerical integration:** adaptive Runge–Kutta (scipy's DOP853), with
+  events for touchdown and skip-out
+- **Atmosphere models:** exponential, U.S. Standard 1976, and spline fits to
+  measured Pathfinder and Huygens profiles
+- **Aerothermodynamics:** Sutton–Graves convective heating with its
+  coefficient computed from gas composition, Tauber–Sutton radiative heating
+  at Earth and Mars, and a fitted CN radiation model at Titan
+- **Verification and validation:** checks against the Allen–Eggers
+  closed-form solution and against Stardust, Pathfinder and Huygens flight
+  data
+- **Uncertainty:** Monte Carlo dispersion of the entry inputs
+- **Design analysis:** entry corridors, skip-out boundaries found by
+  bisection, and a nose-radius trade
+- **Software:** a tested Python package (69 tests), every input traced to a
+  source, reproducible figures
+
 ## Two heating laws
 
 Stagnation-point heat flux, with freestream density $\rho$, speed $V$ and
