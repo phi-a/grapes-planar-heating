@@ -41,7 +41,7 @@ the models, verification against flight data, figures and write-up.
 - **Software:** a tested Python package (69 tests), every input traced to a
   source, reproducible figures
 
-## Two heating laws
+## Convective and Radiative Heating
 
 Stagnation-point heat flux, with freestream density $\rho$, speed $V$ and
 nose radius $R_n$, in SI units:
