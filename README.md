@@ -8,7 +8,9 @@ grapes is a small planetary entry simulator. It flies a capsule through the
 atmospheres of Earth, Mars and Titan in two dimensions and computes the
 heating at its nose, from both hot-gas conduction and radiation. I built it
 to learn how to model a space system end to end: write the physics, check it
-against real flights, then use it to answer a design question.
+against real flights, then use it on a design question:
+
+**For a given entry, how blunt should the nose be?**
 
 ## Background
 
