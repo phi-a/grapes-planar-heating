@@ -361,7 +361,7 @@ def design_map(worlds, titan, filename, number, caption):
     a.set_yscale("log")
     a.set_yticks([0.2, 0.5, 1, 2, 5, 10, 20], ["0.2", "0.5", "1", "2", "5", "10", "20"])
     a.minorticks_off()
-    a.set(xlim=(4.2, 16.6), ylim=(0.15, 34), xlabel="Entry speed, space-fixed (km/s)",
+    a.set(xlim=(3.4, 16.6), ylim=(0.15, 34), xlabel="Entry speed, space-fixed (km/s)",
           ylabel="Nose radius (m)")
     a.grid(False)
     save(fig, filename)
